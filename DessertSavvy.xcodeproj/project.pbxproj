@@ -8,12 +8,14 @@
 
 /* Begin PBXBuildFile section */
 		2D32D20E2C9A36950050FA8F /* DessertSavvyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D32D20D2C9A36950050FA8F /* DessertSavvyApp.swift */; };
-		2D32D2102C9A36950050FA8F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D32D20F2C9A36950050FA8F /* ContentView.swift */; };
+		2D32D2102C9A36950050FA8F /* IntroView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D32D20F2C9A36950050FA8F /* IntroView.swift */; };
 		2D32D2122C9A36960050FA8F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2D32D2112C9A36960050FA8F /* Assets.xcassets */; };
 		2D32D2152C9A36960050FA8F /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2D32D2142C9A36960050FA8F /* Preview Assets.xcassets */; };
 		2D32D21F2C9A36960050FA8F /* DessertSavvyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D32D21E2C9A36960050FA8F /* DessertSavvyTests.swift */; };
 		2D32D2292C9A36960050FA8F /* DessertSavvyUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D32D2282C9A36960050FA8F /* DessertSavvyUITests.swift */; };
 		2D32D22B2C9A36960050FA8F /* DessertSavvyUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D32D22A2C9A36960050FA8F /* DessertSavvyUITestsLaunchTests.swift */; };
+		2D32D2382C9B31CE0050FA8F /* RecipesListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D32D2372C9B31CE0050FA8F /* RecipesListView.swift */; };
+		2D32D23A2C9B37E30050FA8F /* MealAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D32D2392C9B37E30050FA8F /* MealAPI.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,7 +38,7 @@
 /* Begin PBXFileReference section */
 		2D32D20A2C9A36950050FA8F /* DessertSavvy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DessertSavvy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D32D20D2C9A36950050FA8F /* DessertSavvyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DessertSavvyApp.swift; sourceTree = "<group>"; };
-		2D32D20F2C9A36950050FA8F /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		2D32D20F2C9A36950050FA8F /* IntroView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroView.swift; sourceTree = "<group>"; };
 		2D32D2112C9A36960050FA8F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2D32D2142C9A36960050FA8F /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		2D32D21A2C9A36960050FA8F /* DessertSavvyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DessertSavvyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -44,6 +46,8 @@
 		2D32D2242C9A36960050FA8F /* DessertSavvyUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DessertSavvyUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D32D2282C9A36960050FA8F /* DessertSavvyUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DessertSavvyUITests.swift; sourceTree = "<group>"; };
 		2D32D22A2C9A36960050FA8F /* DessertSavvyUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DessertSavvyUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		2D32D2372C9B31CE0050FA8F /* RecipesListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipesListView.swift; sourceTree = "<group>"; };
+		2D32D2392C9B37E30050FA8F /* MealAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealAPI.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -95,7 +99,9 @@
 			isa = PBXGroup;
 			children = (
 				2D32D20D2C9A36950050FA8F /* DessertSavvyApp.swift */,
-				2D32D20F2C9A36950050FA8F /* ContentView.swift */,
+				2D32D20F2C9A36950050FA8F /* IntroView.swift */,
+				2D32D2372C9B31CE0050FA8F /* RecipesListView.swift */,
+				2D32D2392C9B37E30050FA8F /* MealAPI.swift */,
 				2D32D2112C9A36960050FA8F /* Assets.xcassets */,
 				2D32D2132C9A36960050FA8F /* Preview Content */,
 			);
@@ -257,7 +263,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2D32D2102C9A36950050FA8F /* ContentView.swift in Sources */,
+				2D32D23A2C9B37E30050FA8F /* MealAPI.swift in Sources */,
+				2D32D2102C9A36950050FA8F /* IntroView.swift in Sources */,
+				2D32D2382C9B31CE0050FA8F /* RecipesListView.swift in Sources */,
 				2D32D20E2C9A36950050FA8F /* DessertSavvyApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -30,10 +30,17 @@ struct RecipeRow: View {
             }
             .frame(width: thumbnailSize, height: thumbnailSize)
             .clipShape(.rect(cornerRadius: thumbnailSize * 0.30))
+            .shadow(radius: thumbnailSize * 0.10)
+            .overlay(
+                RoundedRectangle(cornerRadius: thumbnailSize * 0.30)
+                    .stroke(Color.gray, lineWidth: 1.0)
+            )
+            .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 10))
             VStack(alignment: .leading) {
                 Text(meal.name)
                 Text(meal.id)
             }
+            .font(.custom("Cochin", size: 23))
         }
     }
 }
@@ -50,11 +57,13 @@ struct RecipesListView: View {
             if let queryResults, queryResults.meals.count > 0 {
                 NavigationView {
                     List(queryResults.meals, id: \.id) { meal in
-//                        NavigationLink(destination: JobDetailView(job: job)) {
-//                            Text(job.title)
-//                        }
-//                        Text(meal.name + " " + meal.thumbnail + " " + meal.id) // TODO replace
                         RecipeRow(meal: meal)
+                            .listRowSeparator(.hidden)
+                            .listRowBackground(
+                                Capsule()
+                                    .fill(Color(white:1, opacity: 0.8))
+                                    .padding(2)
+                            )
                     }
                     .navigationBarTitle("Dessert Search Results")
                 }

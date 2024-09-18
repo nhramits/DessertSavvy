@@ -10,7 +10,7 @@ import WebKit
 
 struct RecipeRow: View {
     
-    let meal: Meal
+    let meal: MealListItem
     
     private let thumbnailSize = 80.0
     
@@ -49,7 +49,7 @@ struct MealListView: View {
     
     var queryInputs: MealListQuery
     @State var queryResultString: String = "Loading..."
-    @State var queryResults: MealSearchResults? = nil
+    @State var queryResults: MealList? = nil
     
     var body: some View {
         VStack(alignment: .center, content: {
@@ -57,7 +57,7 @@ struct MealListView: View {
             if let queryResults, queryResults.meals.count > 0 {
                 NavigationView {
                     List(queryResults.meals, id: \.id) { meal in
-                        NavigationLink(destination: MealDetailView(meal: meal)) {
+                        NavigationLink(destination: MealDetailView(mealListItem: meal)) {
                             RecipeRow(meal: meal)
                         }
                         .listRowSeparator(.hidden)

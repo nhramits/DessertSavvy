@@ -8,18 +8,18 @@
 import Foundation
 
 enum APIError: Error {
-    case client, server, basicResponse, mealListQuery
+    case client, server, basicResponse, mealListQuery, mealDetailQuery
 }
 
-struct MealSearchResults: Codable {
-    let meals: [Meal]
+struct MealList: Codable {
+    let meals: [MealListItem]
     
     enum CodingKeys: String, CodingKey {
         case meals = "meals"
     }
 }
 
-struct Meal: Identifiable, Codable {
+struct MealListItem: Identifiable, Codable {
     let name: String
     let thumbnail: String // TODO URL etc ugh
     let id: String
@@ -49,8 +49,124 @@ class MealListQuery: Hashable {
     }
 }
 
+struct MealDetailList: Codable {
+    let meals: [MealDetailItem]
+    
+    enum CodingKeys: String, CodingKey {
+        case meals = "meals"
+    }
+}
+
+struct MealDetailItem: Identifiable, Codable {
+    let id: String
+    let name: String
+//    let instructions: String?
+//    let thumbnail: String?
+//    let videoLink: String?
+//    
+//    // TODO: Look into a better way to decode into an array
+//    let ingredientName1: String?
+//    let ingredientName2: String?
+//    let ingredientName3: String?
+//    let ingredientName4: String?
+//    let ingredientName5: String?
+//    let ingredientName6: String?
+//    let ingredientName7: String?
+//    let ingredientName8: String?
+//    let ingredientName9: String?
+//    let ingredientName10: String?
+//    let ingredientName11: String?
+//    let ingredientName12: String?
+//    let ingredientName13: String?
+//    let ingredientName14: String?
+//    let ingredientName15: String?
+//    let ingredientName16: String?
+//    let ingredientName17: String?
+//    let ingredientName18: String?
+//    let ingredientName19: String?
+//    let ingredientName20: String?
+//    
+//    let ingredientMeasure1: String?
+//    let ingredientMeasure2: String?
+//    let ingredientMeasure3: String?
+//    let ingredientMeasure4: String?
+//    let ingredientMeasure5: String?
+//    let ingredientMeasure6: String?
+//    let ingredientMeasure7: String?
+//    let ingredientMeasure8: String?
+//    let ingredientMeasure9: String?
+//    let ingredientMeasure10: String?
+//    let ingredientMeasure11: String?
+//    let ingredientMeasure12: String?
+//    let ingredientMeasure13: String?
+//    let ingredientMeasure14: String?
+//    let ingredientMeasure15: String?
+//    let ingredientMeasure16: String?
+//    let ingredientMeasure17: String?
+//    let ingredientMeasure18: String?
+//    let ingredientMeasure19: String?
+//    let ingredientMeasure20: String?
+//    
+//    let recipeSource: String?
+//    let imageSource: String?
+    
+    enum CodingKeys: String, CodingKey {
+        case id = "idMeal"
+        case name = "strMeal"
+//        case instructions = "strInstructions"
+//        case thumbnail = "strMealThumb"
+//        case videoLink = "strYoutube"
+//        
+//        case ingredientName1 = "strIngredient1"
+//        case ingredientName2 = "strIngredient2"
+//        case ingredientName3 = "strIngredient3"
+//        case ingredientName4 = "strIngredient4"
+//        case ingredientName5 = "strIngredient5"
+//        case ingredientName6 = "strIngredient6"
+//        case ingredientName7 = "strIngredient7"
+//        case ingredientName8 = "strIngredient8"
+//        case ingredientName9 = "strIngredient9"
+//        case ingredientName10 = "strIngredient10"
+//        case ingredientName11 = "strIngredient11"
+//        case ingredientName12 = "strIngredient12"
+//        case ingredientName13 = "strIngredient13"
+//        case ingredientName14 = "strIngredient14"
+//        case ingredientName15 = "strIngredient15"
+//        case ingredientName16 = "strIngredient16"
+//        case ingredientName17 = "strIngredient17"
+//        case ingredientName18 = "strIngredient18"
+//        case ingredientName19 = "strIngredient19"
+//        case ingredientName20 = "strIngredient20"
+//        
+//        case ingredientMeasure1 = "strMeasure1"
+//        case ingredientMeasure2 = "strMeasure2"
+//        case ingredientMeasure3 = "strMeasure3"
+//        case ingredientMeasure4 = "strMeasure4"
+//        case ingredientMeasure5 = "strMeasure5"
+//        case ingredientMeasure6 = "strMeasure6"
+//        case ingredientMeasure7 = "strMeasure7"
+//        case ingredientMeasure8 = "strMeasure8"
+//        case ingredientMeasure9 = "strMeasure9"
+//        case ingredientMeasure10 = "strMeasure10"
+//        case ingredientMeasure11 = "strMeasure11"
+//        case ingredientMeasure12 = "strMeasure12"
+//        case ingredientMeasure13 = "strMeasure13"
+//        case ingredientMeasure14 = "strMeasure14"
+//        case ingredientMeasure15 = "strMeasure15"
+//        case ingredientMeasure16 = "strMeasure16"
+//        case ingredientMeasure17 = "strMeasure17"
+//        case ingredientMeasure18 = "strMeasure18"
+//        case ingredientMeasure19 = "strMeasure19"
+//        case ingredientMeasure20 = "strMeasure20"
+//        
+//        case recipeSource = "strSource"
+//        case imageSource = "strImageSource"
+    }
+}
+
 class MealDetailQuery: Hashable {
     
+    // TODO: If we ever change this to take in multiple meal IDs, make sure to also change MealAPI.perform(mealDetailQuery:) to match
     var mealID: String
     
     init(mealID: String) {
@@ -78,12 +194,10 @@ struct MealAPI {
     private let endpointRoot: String = "https://themealdb.com/api/json/v1/1/"
     
     // Primarily throws APIError.mealListQuery up to UI clients
-    func perform(mealListQuery: MealListQuery) async throws -> (String, MealSearchResults?) {
+    func perform(mealListQuery: MealListQuery) async throws -> (String, MealList?) {
         let urlString = endpointRoot + "filter.php?c=\(mealListQuery.category)"
-        let fullURL = URL(string: urlString)!
-        
         do {
-            let searchResults: MealSearchResults = try await perform(fullURL: fullURL)
+            let searchResults: MealList = try await perform(urlString)
             // Success:
             return ("Got \(searchResults.meals.count) results!", searchResults)
         } catch {
@@ -92,7 +206,26 @@ struct MealAPI {
         }
     }
     
-    private func perform<T: Codable>(fullURL: URL) async throws -> (T) {
+    func perform(mealDetailQuery: MealDetailQuery) async throws -> (MealDetailItem) {
+        let urlString = endpointRoot + "lookup.php?i=\(mealDetailQuery.mealID)"
+        do {
+            let fetchResult: MealDetailList = try await perform(urlString)
+            // Success:
+            let singleMealDetail = fetchResult.meals.first // We only support single meal queries right now
+            if let meal = singleMealDetail {
+                return meal
+            } else {
+                print("Failed to fetch meal details for meal with ID = \(mealDetailQuery.mealID)")
+                throw APIError.mealDetailQuery
+            }
+        } catch {
+            print("Failed to fetch meal details for meal with ID = \(mealDetailQuery.mealID)")
+            throw APIError.mealDetailQuery
+        }
+    }
+    
+    private func perform<T: Codable>(_ urlString: String) async throws -> (T) {
+        let fullURL = URL(string:urlString)!
         let request = URLRequest(url: fullURL)
         print("Request is: \n\(request.debugDescription)")
         

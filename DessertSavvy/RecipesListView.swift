@@ -8,6 +8,36 @@
 import SwiftUI
 import WebKit
 
+struct RecipeRow: View {
+    
+    let meal: Meal
+    
+    private let thumbnailSize = 80.0
+    
+    var body: some View {
+        HStack {
+            AsyncImage(url: URL(string: meal.thumbnail)) { phase in
+                switch phase {
+                case .failure:
+                    Image(systemName: "photo")
+                        .font(.largeTitle)
+                case .success(let image):
+                    image
+                        .resizable()
+                default:
+                    ProgressView()
+                }
+            }
+            .frame(width: thumbnailSize, height: thumbnailSize)
+            .clipShape(.rect(cornerRadius: thumbnailSize * 0.30))
+            VStack(alignment: .leading) {
+                Text(meal.name)
+                Text(meal.id)
+            }
+        }
+    }
+}
+
 struct RecipesListView: View {
     
     var queryInputs: MealListQuery
@@ -23,7 +53,8 @@ struct RecipesListView: View {
 //                        NavigationLink(destination: JobDetailView(job: job)) {
 //                            Text(job.title)
 //                        }
-                        Text(meal.name + " " + meal.thumbnail + " " + meal.id) // TODO replace
+//                        Text(meal.name + " " + meal.thumbnail + " " + meal.id) // TODO replace
+                        RecipeRow(meal: meal)
                     }
                     .navigationBarTitle("Dessert Search Results")
                 }

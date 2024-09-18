@@ -45,7 +45,7 @@ struct RecipeRow: View {
     }
 }
 
-struct RecipesListView: View {
+struct MealListView: View {
     
     var queryInputs: MealListQuery
     @State var queryResultString: String = "Loading..."
@@ -57,13 +57,15 @@ struct RecipesListView: View {
             if let queryResults, queryResults.meals.count > 0 {
                 NavigationView {
                     List(queryResults.meals, id: \.id) { meal in
-                        RecipeRow(meal: meal)
-                            .listRowSeparator(.hidden)
-                            .listRowBackground(
-                                Capsule()
-                                    .fill(Color(white:1, opacity: 0.8))
-                                    .padding(2)
-                            )
+                        NavigationLink(destination: MealDetailView(meal: meal)) {
+                            RecipeRow(meal: meal)
+                        }
+                        .listRowSeparator(.hidden)
+                        .listRowBackground(
+                            Capsule()
+                                .fill(Color(white:1, opacity: 0.8))
+                                .padding(2)
+                        )
                     }
                     .navigationBarTitle("Dessert Search Results")
                 }
@@ -88,5 +90,5 @@ struct RecipesListView: View {
 }
 
 #Preview {
-    RecipesListView(queryInputs: MealListQuery())
+    MealListView(queryInputs: MealListQuery())
 }

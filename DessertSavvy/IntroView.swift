@@ -19,7 +19,7 @@ struct IntroView: View {
                     .foregroundStyle(.red)
                 Text("Dessert Savvy")
                 NavigationLink {
-                    RecipesListView(queryInputs: queryInputs)
+                    MealListView(queryInputs: queryInputs)
                 } label: {
                     Label("See Desserts List", systemImage: "heart.fill")
                 }

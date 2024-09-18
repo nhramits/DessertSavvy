@@ -8,7 +8,7 @@
 import Foundation
 
 enum APIError: Error {
-    case client, server
+    case client, server, basicResponse, mealListQuery
 }
 
 struct MealSearchResults: Codable {
@@ -31,10 +31,12 @@ struct Meal: Identifiable, Codable {
     }
 }
 
-// TODO : like QueryInputs
-class MealQuery: Hashable {
+class MealListQuery: Hashable {
     
-    static func == (lhs: MealQuery, rhs: MealQuery) -> Bool {
+    // For now, we only ever look for desserts. In the future we can flesh this out with other options and a convenience enum type, etc.
+    var category: String = "Dessert"
+    
+    static func == (lhs: MealListQuery, rhs: MealListQuery) -> Bool {
         return (
             lhs.category == rhs.category
             // && lhs.propertyX == rhs.propertyX etc for any newly added properties
@@ -45,24 +47,52 @@ class MealQuery: Hashable {
         hasher.combine(category)
         //hasher.combine(propertyX) etc for any newly added properties
     }
+}
+
+class MealDetailQuery: Hashable {
     
-    // For now, we only ever look for desserts. In the future we can flesh this out with other options and a convenience enum type, etc.
-    var category: String = "Dessert"
+    var mealID: String
+    
+    init(mealID: String) {
+        self.mealID = mealID
+    }
+    
+    static func == (lhs: MealDetailQuery, rhs: MealDetailQuery) -> Bool {
+        return (
+            lhs.mealID == rhs.mealID
+            // && lhs.propertyX == rhs.propertyX etc for any newly added properties
+        )
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(mealID)
+        //hasher.combine(propertyX) etc for any newly added properties
+    }
 }
 
 // https://themealdb.com/api.php
-struct MealRequest {
-       
-    var queryInputs: MealQuery
+struct MealAPI {
     
     // TODO: Using test key for now. Use of a real key would need to be properly hidden to prevent public leaks.
     private let applicationKey = "1"
+    private let endpointRoot: String = "https://themealdb.com/api/json/v1/1/"
     
-    func perform() async throws -> (String, MealSearchResults?) {
-        
-        var urlString = "https://themealdb.com/api/json/v1/1/"
-        urlString += "filter.php?c=\(queryInputs.category)"
+    // Primarily throws APIError.mealListQuery up to UI clients
+    func perform(mealListQuery: MealListQuery) async throws -> (String, MealSearchResults?) {
+        let urlString = endpointRoot + "filter.php?c=\(mealListQuery.category)"
         let fullURL = URL(string: urlString)!
+        
+        do {
+            let searchResults: MealSearchResults = try await perform(fullURL: fullURL)
+            // Success:
+            return ("Got \(searchResults.meals.count) results!", searchResults)
+        } catch {
+            print("Failed to perform meal list query: \(error)")
+            throw APIError.mealListQuery
+        }
+    }
+    
+    private func perform<T: Codable>(fullURL: URL) async throws -> (T) {
         let request = URLRequest(url: fullURL)
         print("Request is: \n\(request.debugDescription)")
         
@@ -82,23 +112,23 @@ struct MealRequest {
             if let basicResponseJSON = String(data: data, encoding: String.Encoding.utf8) {
                 print("Basic response received: \(basicResponseJSON)")
             } else {
-                return ("Failed to get basic response into a string!", nil)
+                print("Failed to get basic response into a string!")
+                throw APIError.basicResponse
             }
             
             // Decoding results
             do {
-                let searchResults = try JSONDecoder().decode(MealSearchResults.self, from: data)
-                
-                return ("Got \(searchResults.meals.count) results!", searchResults)
+                let searchResults = try JSONDecoder().decode(T.self, from: data)
+                return searchResults
                 
             } catch {
-                print(error)
-                return ("Failed JSON decoding! Error: \n\(error)", nil)
+                print("JSON decoding error: \(error)")
+                throw error
             }
-            
         } catch {
             // E.g. ran into this before adding info key NSAppTransportSecurity > NSAllowsArbitraryLoads = YES
-            return ("Unexpected error: \(error).", nil)
+            print("Unexpected error: \(error)")
+            throw error
         }
     }
     

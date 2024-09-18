@@ -9,7 +9,7 @@ import SwiftUI
 
 struct IntroView: View {
     
-    private var queryInputs = MealQuery()
+    private var queryInputs = MealListQuery()
     
     var body: some View {
         NavigationStack {

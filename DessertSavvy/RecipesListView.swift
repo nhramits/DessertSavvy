@@ -10,40 +10,43 @@ import WebKit
 
 struct RecipesListView: View {
     
-    var queryInputs: MealQuery
+    var queryInputs: MealListQuery
     @State var queryResultString: String = "Loading..."
     @State var queryResults: MealSearchResults? = nil
     
     var body: some View {
         VStack(alignment: .center, content: {
             Text(queryResultString)
-            if let queryResults {
-                if queryResults.meals.count > 0 {
-                    NavigationView {
-                        List(queryResults.meals, id: \.id) { meal in
-//                            NavigationLink(destination: JobDetailView(job: job)) {
-//                                Text(job.title)
-//                            }
-                            Text(meal.name + " " + meal.thumbnail + " " + meal.id) // TODO replace
-                        }
-                        .navigationBarTitle("Dessert Search Results")
+            if let queryResults, queryResults.meals.count > 0 {
+                NavigationView {
+                    List(queryResults.meals, id: \.id) { meal in
+//                        NavigationLink(destination: JobDetailView(job: job)) {
+//                            Text(job.title)
+//                        }
+                        Text(meal.name + " " + meal.thumbnail + " " + meal.id) // TODO replace
                     }
+                    .navigationBarTitle("Dessert Search Results")
                 }
             }
         })
         .padding()
         .task {
             do {
-                (queryResultString, queryResults) =  try await MealRequest(queryInputs: queryInputs).perform()
-                
-                print("Did the thing here...")
+                (queryResultString, queryResults) =  try await MealAPI().perform(mealListQuery: queryInputs)
+                print("Successfully performed meal query.")
             } catch {
-                queryResultString = "Failed :("
+                // TODO: Implement better UI and retry mechanics
+                switch error {
+                case APIError.mealListQuery:
+                    queryResultString = "Failed to get list of Desserts! Please try again later."
+                default:
+                    queryResultString = "Unexpected error! Please try again later."
+                }
             }
         }
     }
 }
 
 #Preview {
-    RecipesListView(queryInputs: MealQuery())
+    RecipesListView(queryInputs: MealListQuery())
 }

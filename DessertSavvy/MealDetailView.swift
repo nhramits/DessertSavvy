@@ -16,25 +16,17 @@ struct MealDetailView: View {
     
     var body: some View {
         VStack {
-            
             if let errorString = errorString {
                 // TODO: Implement better error UI
                 Text(errorString)
             } else if let meal = meal {
-                VStack {
-                    Text(meal.id)
-                    Text(meal.name)
-//                    if let imageSource = meal.imageSource {
-//                        Text(imageSource)
-//                    }
-                }
+                ValidMealView(meal: meal)
             } else { // Still loading.
                 VStack {
                     Text("Loading...")
                     ProgressView()
                 }
             }
-            
         }
         .padding()
         .task {
@@ -49,6 +41,197 @@ struct MealDetailView: View {
                     errorString = "Unexpected error! Please try again later."
                 }
             }
+        }
+    }
+}
+
+struct ValidMealView: View {
+    let meal: MealDetailItem
+    
+    let thumbnailSize = 300.0
+    private var thumbnailRadius: CGFloat {
+        return thumbnailSize * 0.10
+    }
+    
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading) {
+                // -- Header section
+                VStack(alignment: .center) {
+                    //Text(meal.id)
+                    Text(meal.name)
+                        .font(.custom("Cochin", size: 40))
+                        .multilineTextAlignment(.center)
+                    
+                    // Big image and associated views
+                    HStack {
+                        Spacer()
+                        VStack(alignment: .trailing, spacing: 6) {
+                            if let thumbnail = meal.thumbnail {
+                                AsyncImage(url: URL(string: thumbnail)) { phase in
+                                    switch phase {
+                                    case .failure:
+                                        Image(systemName: "photo")
+                                            .font(.largeTitle)
+                                    case .success(let image):
+                                        image
+                                            .resizable()
+                                    default:
+                                        ProgressView()
+                                    }
+                                }
+                                .frame(width: thumbnailSize, height: thumbnailSize)
+                                .clipShape(.rect(cornerRadius: thumbnailRadius))
+                                .shadow(radius: thumbnailSize * 0.10)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: thumbnailRadius)
+                                        .stroke(Color.black, lineWidth: 3.0)
+                                )
+                                .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 10))
+                            }
+                            
+                            // LEGAL: When present, cite the image source under the image
+                            HStack {
+                                Spacer()
+                                Text(imageSourceCopy)
+                                    .font(.caption2)
+                                    .foregroundStyle(.gray)
+                            }
+                        }
+                        Spacer()
+                    }
+                }
+                
+                // -- Ingredients section
+                HStack(alignment: .firstTextBaseline) {
+                    Image(systemName: "carrot.fill")
+                    Text("Ingredients")
+                }
+                .font(.title2)
+                .underline(true, pattern: .solid, color: .black)
+                .imageScale(.small)
+                
+                IngredientsTableView(meal: meal)
+                    .padding(EdgeInsets(top: 0, leading: 40, bottom: 0, trailing: 0))
+                
+                // -- Instructions section
+                if let instructions = meal.instructions {
+                    HStack(alignment: .firstTextBaseline) {
+                        Image(systemName: "fork.knife")
+                        Text("Instructions")
+                    }
+                    .font(.title2)
+                    .underline(true, pattern: .solid, color: .black)
+                    .imageScale(.small)
+                    
+                    Text(instructions)
+                        .padding(EdgeInsets(top: 5, leading: 40, bottom: 0, trailing: 0))
+                        .font(.custom("American Typewriter", size: 14, relativeTo: .body))
+                }
+                
+                // TODO: more views down below...
+            }
+        }
+        .safeAreaPadding(EdgeInsets(top: 0, leading: 0, bottom: 400, trailing: 0))
+    }
+    
+    var imageSourceCopy: String {
+        if let imageSource = meal.imageSource {
+            return "(\(imageSource))"
+        } else {
+            return "(Image Source Unknown)"
+        }
+    }
+}
+
+// "Table" of ingredients in left colum and corresponding quantities in the right column
+struct IngredientsTableView: View {
+    
+    let meal: MealDetailItem
+    
+    let columns: [GridItem] =
+             Array(repeating: .init(.flexible()), count: 2)
+    
+    private struct IngredientRow: Identifiable {
+        let name: String
+        let measurement: String
+        var id: String { name + measurement}
+    }
+    
+    private var gridItems: [IngredientRow] {
+        var items: [IngredientRow] = Array()
+        
+        // TODO: There must be a better way to do this
+        if let i = meal.ingredientName1, let m = meal.ingredientMeasure1, !i.isEmpty && !m.isEmpty {
+            items.append(IngredientRow(name: i, measurement: m))
+        }
+        if let i = meal.ingredientName2, let m = meal.ingredientMeasure2, !i.isEmpty && !m.isEmpty {
+            items.append(IngredientRow(name: i, measurement: m))
+        }
+        if let i = meal.ingredientName3, let m = meal.ingredientMeasure3, !i.isEmpty && !m.isEmpty {
+            items.append(IngredientRow(name: i, measurement: m))
+        }
+        if let i = meal.ingredientName4, let m = meal.ingredientMeasure4, !i.isEmpty && !m.isEmpty {
+            items.append(IngredientRow(name: i, measurement: m))
+        }
+        if let i = meal.ingredientName5, let m = meal.ingredientMeasure5, !i.isEmpty && !m.isEmpty {
+            items.append(IngredientRow(name: i, measurement: m))
+        }
+        if let i = meal.ingredientName6, let m = meal.ingredientMeasure6, !i.isEmpty && !m.isEmpty {
+            items.append(IngredientRow(name: i, measurement: m))
+        }
+        if let i = meal.ingredientName7, let m = meal.ingredientMeasure7, !i.isEmpty && !m.isEmpty {
+            items.append(IngredientRow(name: i, measurement: m))
+        }
+        if let i = meal.ingredientName8, let m = meal.ingredientMeasure8, !i.isEmpty && !m.isEmpty {
+            items.append(IngredientRow(name: i, measurement: m))
+        }
+        if let i = meal.ingredientName9, let m = meal.ingredientMeasure9, !i.isEmpty && !m.isEmpty {
+            items.append(IngredientRow(name: i, measurement: m))
+        }
+        if let i = meal.ingredientName10, let m = meal.ingredientMeasure10, !i.isEmpty && !m.isEmpty {
+            items.append(IngredientRow(name: i, measurement: m))
+        }
+        if let i = meal.ingredientName11, let m = meal.ingredientMeasure11, !i.isEmpty && !m.isEmpty {
+            items.append(IngredientRow(name: i, measurement: m))
+        }
+        if let i = meal.ingredientName12, let m = meal.ingredientMeasure12, !i.isEmpty && !m.isEmpty {
+            items.append(IngredientRow(name: i, measurement: m))
+        }
+        if let i = meal.ingredientName13, let m = meal.ingredientMeasure13, !i.isEmpty && !m.isEmpty {
+            items.append(IngredientRow(name: i, measurement: m))
+        }
+        if let i = meal.ingredientName14, let m = meal.ingredientMeasure14, !i.isEmpty && !m.isEmpty {
+            items.append(IngredientRow(name: i, measurement: m))
+        }
+        if let i = meal.ingredientName15, let m = meal.ingredientMeasure15, !i.isEmpty && !m.isEmpty {
+            items.append(IngredientRow(name: i, measurement: m))
+        }
+        if let i = meal.ingredientName16, let m = meal.ingredientMeasure16, !i.isEmpty && !m.isEmpty {
+            items.append(IngredientRow(name: i, measurement: m))
+        }
+        if let i = meal.ingredientName17, let m = meal.ingredientMeasure17, !i.isEmpty && !m.isEmpty {
+            items.append(IngredientRow(name: i, measurement: m))
+        }
+        if let i = meal.ingredientName18, let m = meal.ingredientMeasure18, !i.isEmpty && !m.isEmpty {
+            items.append(IngredientRow(name: i, measurement: m))
+        }
+        if let i = meal.ingredientName19, let m = meal.ingredientMeasure19, !i.isEmpty && !m.isEmpty {
+            items.append(IngredientRow(name: i, measurement: m))
+        }
+        if let i = meal.ingredientName20, let m = meal.ingredientMeasure20, !i.isEmpty && !m.isEmpty {
+            items.append(IngredientRow(name: i, measurement: m))
+        }
+        return items
+    }
+
+    var body: some View {
+        LazyVGrid(columns: columns, alignment: .listRowSeparatorLeading) {
+            ForEach(gridItems) { item in
+                Text(item.name)
+                Text(item.measurement)
+            }
+            .font(.custom("American Typewriter", size: 14.0))
         }
     }
 }

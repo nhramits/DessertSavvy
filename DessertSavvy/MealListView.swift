@@ -13,6 +13,9 @@ struct RecipeRow: View {
     let meal: MealListItem
     
     private let thumbnailSize = 80.0
+    private var thumbnailRadius: CGFloat {
+        return thumbnailSize * 0.30
+    }
     
     var body: some View {
         HStack {
@@ -29,16 +32,16 @@ struct RecipeRow: View {
                 }
             }
             .frame(width: thumbnailSize, height: thumbnailSize)
-            .clipShape(.rect(cornerRadius: thumbnailSize * 0.30))
+            .clipShape(.rect(cornerRadius: thumbnailRadius))
             .shadow(radius: thumbnailSize * 0.10)
             .overlay(
-                RoundedRectangle(cornerRadius: thumbnailSize * 0.30)
+                RoundedRectangle(cornerRadius: thumbnailRadius)
                     .stroke(Color.gray, lineWidth: 1.0)
             )
             .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 10))
             VStack(alignment: .leading) {
                 Text(meal.name)
-                Text(meal.id)
+                //Text(meal.id)
             }
             .font(.custom("Cochin", size: 23))
         }
@@ -48,12 +51,11 @@ struct RecipeRow: View {
 struct MealListView: View {
     
     var queryInputs: MealListQuery
-    @State var queryResultString: String = "Loading..."
+    @State var queryStatusString: String = "Loading..."
     @State var queryResults: MealList? = nil
     
     var body: some View {
         VStack(alignment: .center, content: {
-            Text(queryResultString)
             if let queryResults, queryResults.meals.count > 0 {
                 NavigationView {
                     List(queryResults.meals, id: \.id) { meal in
@@ -67,22 +69,24 @@ struct MealListView: View {
                                 .padding(2)
                         )
                     }
-                    .navigationBarTitle("Dessert Search Results")
+                    .navigationBarTitle("\(queryResults.meals.count) Desserts")
                 }
+            } else {
+                Text(queryStatusString)
             }
         })
         .padding()
         .task {
             do {
-                (queryResultString, queryResults) =  try await MealAPI().perform(mealListQuery: queryInputs)
+                (queryStatusString, queryResults) =  try await MealAPI().perform(mealListQuery: queryInputs)
                 print("Successfully performed meal query.")
             } catch {
                 // TODO: Implement better UI and retry mechanics
                 switch error {
                 case APIError.mealListQuery:
-                    queryResultString = "Failed to get list of Desserts! Please try again later."
+                    queryStatusString = "Failed to get list of Desserts! Please try again later."
                 default:
-                    queryResultString = "Unexpected error! Please try again later."
+                    queryStatusString = "Unexpected error! Please try again later."
                 }
             }
         }

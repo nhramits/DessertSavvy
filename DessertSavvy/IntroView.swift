@@ -13,19 +13,28 @@ struct IntroView: View {
     
     var body: some View {
         NavigationStack {
-            VStack {
-                Image(systemName: "heart.fill")
-                    .imageScale(.large)
-                    .foregroundStyle(.red)
-                Text("Dessert Savvy")
+            VStack(alignment: .center) {
+                Spacer()
+                Text("Dessert")
+                    .font(.custom("Savoye Let", size: 90))
+                Text("Savvy")
+                    .font(.custom("Savoye Let", size: 90))
+                Text("(A SwiftUI app by Nathan Hramits)")
+                    .font(.caption2)
+                Spacer()
                 NavigationLink {
                     MealListView(queryInputs: queryInputs)
                 } label: {
-                    Label("See Desserts List", systemImage: "heart.fill")
+                    Label("Show Me Desserts!", systemImage: "birthday.cake.fill")
+                        .font(.title3)
                 }
+                .background(
+                    RoundedRectangle(cornerRadius: 25.0)
+                        .backgroundStyle(.green)
+                )
+                Spacer()
             }
             .padding()
-            .foregroundColor(.blue)
         }
     }
 }

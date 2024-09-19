@@ -103,33 +103,31 @@ struct ValidMealView: View {
                 }
                 
                 // -- Ingredients section
-                HStack(alignment: .firstTextBaseline) {
-                    Image(systemName: "carrot.fill")
-                    Text("Ingredients")
-                }
-                .font(.title2)
-                .underline(true, pattern: .solid, color: .black)
-                .imageScale(.small)
-                
+                SectionHeader(systemImageName: "carrot.fill", text: "Ingredients")
                 IngredientsTableView(meal: meal)
                     .padding(EdgeInsets(top: 0, leading: 40, bottom: 0, trailing: 0))
                 
                 // -- Instructions section
                 if let instructions = meal.instructions {
-                    HStack(alignment: .firstTextBaseline) {
-                        Image(systemName: "fork.knife")
-                        Text("Instructions")
-                    }
-                    .font(.title2)
-                    .underline(true, pattern: .solid, color: .black)
-                    .imageScale(.small)
-                    
+                    SectionHeader(systemImageName: "fork.knife", text: "Instructions")
                     Text(instructions)
                         .padding(EdgeInsets(top: 5, leading: 40, bottom: 0, trailing: 0))
                         .font(.custom("American Typewriter", size: 14, relativeTo: .body))
                 }
                 
-                // TODO: more views down below...
+                // -- Video section
+                if let videoLink = meal.videoLink, !videoLink.isEmpty {
+                    SectionHeader(systemImageName: "movieclapper", text: "Video Link")
+                    Link("Watch Video", destination: URL(string: videoLink)!)
+                        .padding(EdgeInsets(top: 0, leading: 40, bottom: 0, trailing: 0))
+                }
+                
+                // -- Attribution section
+                if let recipeSource = meal.recipeSource, !recipeSource.isEmpty {
+                    SectionHeader(systemImageName: "note.text", text: "Source")
+                    Link("View Original Source", destination: URL(string: recipeSource)!)
+                        .padding(EdgeInsets(top: 0, leading: 40, bottom: 0, trailing: 0))
+                }
             }
         }
         .safeAreaPadding(EdgeInsets(top: 0, leading: 0, bottom: 400, trailing: 0))
@@ -144,6 +142,25 @@ struct ValidMealView: View {
     }
 }
 
+struct SectionHeader: View {
+    
+    let systemImageName: String?
+    let text: String
+    
+    var body: some View {
+        HStack(alignment: .firstTextBaseline) {
+            if let systemImageName = systemImageName {
+                Image(systemName: systemImageName)
+            }
+            Text(verbatim: text)
+        }
+        .font(.title2)
+        .underline(true, pattern: .solid, color: .black)
+        .imageScale(.small)
+        .padding(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0))
+    }
+}
+
 // "Table" of ingredients in left colum and corresponding quantities in the right column
 struct IngredientsTableView: View {
     
@@ -155,7 +172,8 @@ struct IngredientsTableView: View {
     private struct IngredientRow: Identifiable {
         let name: String
         let measurement: String
-        var id: String { name + measurement}
+        private let uniqueID = UUID().uuidString
+        var id: String { name + measurement + uniqueID}
     }
     
     private var gridItems: [IngredientRow] {
@@ -235,3 +253,5 @@ struct IngredientsTableView: View {
         }
     }
 }
+
+

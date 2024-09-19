@@ -13,28 +13,44 @@ struct IntroView: View {
     
     var body: some View {
         NavigationStack {
-            VStack(alignment: .center) {
-                Spacer()
-                Text("Dessert")
-                    .font(.custom("Savoye Let", size: 90))
-                Text("Savvy")
-                    .font(.custom("Savoye Let", size: 90))
-                Text("(A SwiftUI app by Nathan Hramits)")
-                    .font(.caption2)
-                Spacer()
-                NavigationLink {
-                    MealListView(queryInputs: queryInputs)
-                } label: {
-                    Label("Show Me Desserts!", systemImage: "birthday.cake.fill")
-                        .font(.title3)
+            ZStack() {
+                Image("marbleCountertop")
+                    .resizable()
+                    .ignoresSafeArea()
+                VStack(alignment: .center) {
+                    Spacer()
+                    ZStack {
+                        Circle()
+                            .fill(.black)
+                            .frame(width: 350, height: 350)
+                        Circle()
+                            .foregroundStyle(.gray.gradient)
+                            .frame(width: 340, height: 340)
+                        VStack(alignment: .center) {
+                            Text("Dessert")
+                                .font(.custom("Savoye Let", size: 90))
+                            Text("Savvy")
+                                .font(.custom("Savoye Let", size: 90))
+                        }
+                    }
+                    Text("(A SwiftUI app by Nathan Hramits)")
+                        .font(.caption)
+                        .underline(pattern: .dot)
+                    Spacer()
+                    NavigationLink(destination: MealListView(queryInputs: queryInputs)) {
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 25.0)
+                                .foregroundStyle(.blue.gradient)
+                            Text("Show Me Desserts!")
+                                .font(.title3)
+                                .foregroundStyle(.black)
+                        }
+                    }
+                    .frame(width: 200, height: 50)
+                    Spacer()
                 }
-                .background(
-                    RoundedRectangle(cornerRadius: 25.0)
-                        .backgroundStyle(.green)
-                )
-                Spacer()
+                .padding()
             }
-            .padding()
         }
     }
 }
